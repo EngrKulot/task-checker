@@ -4,6 +4,10 @@ let appData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 const today = getDateString(new Date());
 let selectedDate = today;
 
+// New variables to track displayed calendar month and year
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
   renderCalendar();
@@ -33,10 +37,49 @@ function renderHeader() {
 function renderCalendar() {
   const calendarEl = document.getElementById("calendar");
   calendarEl.innerHTML = "";
-  const now = parseDate(selectedDate);
-  let firstDate = new Date(now.getFullYear(), now.getMonth(), 1);
-  let lastDate = new Date(now.getFullYear(), now.getMonth()+1, 0);
-  let todayDate = parseDate(today);
+
+  // Add month navigation buttons
+  let navContainer = document.createElement("div");
+  navContainer.style.display = "flex";
+  navContainer.style.justifyContent = "space-between";
+  navContainer.style.marginBottom = "10px";
+
+  let prevBtn = document.createElement("button");
+  prevBtn.textContent = "< Prev";
+  prevBtn.onclick = () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar();
+  };
+
+  let nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next >";
+  nextBtn.onclick = () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar();
+  };
+
+  let monthYearLabel = document.createElement("div");
+  monthYearLabel.textContent = new Date(currentYear, currentMonth).toLocaleString('default', {month: 'long', year: 'numeric'});
+  monthYearLabel.style.color = "#42a6fa";
+  monthYearLabel.style.fontWeight = "600";
+  monthYearLabel.style.alignSelf = "center";
+
+  navContainer.appendChild(prevBtn);
+  navContainer.appendChild(monthYearLabel);
+  navContainer.appendChild(nextBtn);
+  calendarEl.appendChild(navContainer);
+
+  // Build calendar grid
+  const firstDate = new Date(currentYear, currentMonth, 1);
+  const lastDate = new Date(currentYear, currentMonth + 1, 0);
   let labels = ["Su","Mo","Tu","We","Th","Fr","Sa"];
   labels.forEach(l => {
     let lab = document.createElement("div");
@@ -45,21 +88,25 @@ function renderCalendar() {
     calendarEl.appendChild(lab);
   });
   // Empty leading days
-  for(let i=0;i<firstDate.getDay();i++){
+  for(let i=0; i<firstDate.getDay(); i++){
     let empty = document.createElement("div");
     empty.className = "calendar-day";
     empty.innerHTML = "";
     calendarEl.appendChild(empty);
   }
-  for(let d=1; d<=lastDate.getDate(); d++){
-    let dayDate = new Date(now.getFullYear(), now.getMonth(), d);
+
+  // Fill days
+  for(let d=1; d <= lastDate.getDate(); d++){
+    let dayDate = new Date(currentYear, currentMonth, d);
     let dayStr = getDateString(dayDate);
     let day = document.createElement("div");
     day.className = "calendar-day";
     day.textContent = d;
+
     if(dayStr === today) day.classList.add("today");
     if(dayStr === selectedDate) day.classList.add("selected");
     if(appData[dayStr] && appData[dayStr].tasks.length > 0) day.classList.add("has-tasks");
+
     day.onclick = () => {
       selectedDate = dayStr;
       renderHeader();
@@ -75,6 +122,7 @@ function renderCalendar() {
 function renderTaskSection() {
   document.getElementById("tasks-headline").textContent =
     selectedDate === today ? "Today's Tasks" : `Tasks for ${parseDate(selectedDate).toDateString()}`;
+
   document.getElementById("task-input").value = "";
   let ul = document.getElementById("task-list");
   ul.innerHTML = "";
@@ -116,8 +164,9 @@ function addTask(date,text) {
   renderTaskSection();
   renderCalendar();
 }
+
 function markTaskCompleted(date, idx) {
-  let t = appData[date].tasks.splice(idx,1)[0];  // Extract the object correctly
+  let t = appData[date].tasks.splice(idx,1)[0];
   appData[date].completed.push(t);
   saveData();
   renderTaskSection();
