@@ -1,187 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Moving Pictures Rows - MVP</title>
-<style>
-  /* Color scheme variables */
-  :root {
-    --white: #ffffff;
-    --gold: #d4af37;
-    --red-maroon: #800000;
-    --light-bg: #faf9f6;
-  }
-
-  body {
-    margin: 0;
-    background: var(--light-bg);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden;
-    color: var(--red-maroon);
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .row {
-    display: flex;
-    overflow: hidden;
-    margin: 2rem 0;
-    border-radius: 12px;
-  }
-
-  .row .slider {
-    display: flex;
-    width: calc(220px * 16); /* 8 pics repeated twice for looping */
-    animation-timing-function: linear;
-  }
-
-  .row:nth-child(1) .slider {
-    animation: scrollRight 60s linear infinite;
-  }
-
-  .row:nth-child(2) .slider {
-    animation: scrollLeft 60s linear infinite;
-  }
-
-  .row:nth-child(3) .slider {
-    animation: scrollRight 60s linear infinite;
-  }
-
-  .row img {
-    width: 220px;
-    height: 140px;
-    object-fit: cover;
-    margin-right: 10px;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-
-
-  /* Animations for scrolling */
-  @keyframes scrollRight {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0); }
-  }
-
-  @keyframes scrollLeft {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* Fullscreen zoom overlay */
-  #fullscreenOverlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    cursor: zoom-out;
-  }
-
- #fullscreenOverlay img {
-  width: 1200px;   /* explicit fixed width */
-  height: auto;    /* keep aspect ratio */
-  border-radius: 12px;
-  box-shadow: 0 0 30px var(--gold);
-  object-fit: contain;
-}
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .row img {
-      width: 160px;
-      height: 100px;
-      margin-right: 8px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .row img {
-      width: 120px;
-      height: 80px;
-      margin-right: 6px;
-    }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Task Checker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <div class="row" id="row1">
-    <div class="slider" aria-label="Row 1 images"></div>
-  </div>
-  <div class="row" id="row2">
-    <div class="slider" aria-label="Row 2 images"></div>
-  </div>
-  <div class="row" id="row3">
-    <div class="slider" aria-label="Row 3 images"></div>
-  </div>
-</div>
-
-<!-- Fullscreen overlay container -->
-<div id="fullscreenOverlay">
-  <img src="" alt="Zoomed image" />
-</div>
-
-<script>
-  const imgUrls = [
-    'https://static.wixstatic.com/media/639106_c1aacb8ea4ae4d21b436d91bee8c5005~mv2.jpg/v1/fill/w_800,h_489,al_c,q_85,enc_auto/639106_c1aacb8ea4ae4d21b436d91bee8c5005~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_2165fe664ec24ff99990693eb6672937~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_2165fe664ec24ff99990693eb6672937~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_7105130adbc541dbb3eddc93cad8c557~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_7105130adbc541dbb3eddc93cad8c557~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_3df847b9bc944c76bd1cd32e2b3fe90a~mv2.jpg/v1/fill/w_1066,h_600,al_c,q_85,enc_auto/639106_3df847b9bc944c76bd1cd32e2b3fe90a~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_171b8133eb8e41aeb171e16c33123a06~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_171b8133eb8e41aeb171e16c33123a06~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_69553e33de3c46e89b98a68cf6ed8494~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_69553e33de3c46e89b98a68cf6ed8494~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_56f79030dded4204a3c9cbb77b5ec99d~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_56f79030dded4204a3c9cbb77b5ec99d~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_fa04f9c3baee47168b0aca5ed214f010~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_fa04f9c3baee47168b0aca5ed214f010~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_c650b4e05b0c45128ac4d279aae77b1a~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_c650b4e05b0c45128ac4d279aae77b1a~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_209650f36b804d99bf1c6957e2dd5ba2~mv2.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_209650f36b804d99bf1c6957e2dd5ba2~mv2.jpg',
-    'https://static.wixstatic.com/media/639106_6cc6661488074f94a857bea2fae86824.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_6cc6661488074f94a857bea2fae86824.jpg',
-    'https://static.wixstatic.com/media/639106_772aff3732b44402bd206fa3f805972f.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_772aff3732b44402bd206fa3f805972f.jpg',
-    'https://static.wixstatic.com/media/639106_2cd00b7dfac149a0920c3fc20dfcdb0b.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_2cd00b7dfac149a0920c3fc20dfcdb0b.jpg',
-    'https://static.wixstatic.com/media/639106_e6e6e4e1b64744d6a4b7271acf22d590.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_e6e6e4e1b64744d6a4b7271acf22d590.jpg',
-    'https://static.wixstatic.com/media/639106_ba9c8c15a59b47a581dc67134b46f8d3.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_ba9c8c15a59b47a581dc67134b46f8d3.jpg',
-    'https://static.wixstatic.com/media/639106_cf4526b0b38f49129dd1cfc43b828f37.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_cf4526b0b38f49129dd1cfc43b828f37.jpg',
-    'https://static.wixstatic.com/media/639106_e21105e3faab4de08c9b4f709b07eac1.jpg/v1/fill/w_800,h_600,al_c,q_85,enc_auto/639106_e21105e3faab4de08c9b4f709b07eac1.jpg'
-  ];
-
-  // Populate rows with duplicated images for smooth looping
-  function populateRow(rowId) {
-    const rowSlider = document.querySelector(`#${rowId} .slider`);
-    let html = '';
-    for(let i=0; i<2; i++) {
-      imgUrls.forEach(url => {
-        html += `<img src="${url}" alt="Moving image" />`;
-      });
-    }
-    rowSlider.innerHTML = html;
-  }
-  ['row1', 'row2', 'row3'].forEach(populateRow);
-
-  // Fullscreen overlay element
-  const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-  const fullscreenImg = fullscreenOverlay.querySelector('img');
-
-  // Show fullscreen overlay with clicked image
-  document.body.addEventListener('click', (e) => {
-    if(e.target.tagName === 'IMG' && e.target.parentElement.classList.contains('slider')) {
-      fullscreenImg.src = e.target.src;
-      fullscreenOverlay.style.display = 'flex';
-      document.body.style.overflow = 'hidden'; // prevent background scroll
-    } else if (e.target === fullscreenOverlay || e.target === fullscreenImg) {
-      fullscreenOverlay.style.display = 'none';
-      fullscreenImg.src = '';
-      document.body.style.overflow = ''; // restore scroll
-    }
-  });
-</script>
+  <header>
+    <h1>Task Checker</h1>
+    <p id="header-date"></p>
+  </header>
+  <main>
+    <section class="calendar-section">
+      <div id="calendar"></div>
+    </section>
+    <section class="task-section">
+      <h2 id="tasks-headline">Today's Tasks</h2>
+      <form id="task-form">
+        <input type="text" id="task-input" placeholder="Add a new task..." required>
+        <button type="submit">Add</button>
+      </form>
+      <ul id="task-list"></ul>
+      <div id="completed-summary"></div>
+    </section>
+    <section class="completed-section">
+      <h3>Completed Tasks</h3>
+      <ul id="completed-list"></ul>
+    </section>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
