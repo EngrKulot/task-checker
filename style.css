@@ -35,14 +35,14 @@ section {
   margin-bottom: 1.5em;
 }
 
-/* Calendar container - walang grid, para sa navigation at calendar grid */
+/* Calendar container */
 #calendar {
   background: #181c2c;
   border-radius: 8px;
   padding: 10px;
 }
 
-/* Month Navigation Bar - separate from grid */
+/* Month Navigation Bar */
 .calendar-nav-container {
   display: flex;
   justify-content: center;
@@ -120,7 +120,7 @@ section {
   border-bottom: 2px solid #fae142;
 }
 
-/* Rest of your styles remain the same */
+/* Task form */
 #task-form {
   display: flex;
   gap: 0.5em;
@@ -145,12 +145,15 @@ section {
 #task-form button:hover {
   background: #2e80c7;
 }
+
+/* Lists */
 ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-#task-list li, #completed-list li {
+
+#task-list li {
   background: #1e2857;
   color: #fff;
   margin-bottom: 8px;
@@ -160,30 +163,71 @@ ul {
   align-items: center;
   justify-content: space-between;
 }
-#task-list li label {
-  flex: 1;
-  cursor: pointer;
-}
+
 #task-list input[type="checkbox"] {
   accent-color: #42a6fa;
   margin-right: 18px;
   transform: scale(1.2);
 }
+
+#completed-list li {
+  background: #202231;
+  color: #999;
+  margin-bottom: 8px;
+  padding: 12px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .completed-section h3 {
   color: #fae142;
   margin-top: 1em;
 }
-#completed-list li {
-  background: #202231;
-  color: #999;
-  text-decoration: line-through;
-  font-size: 0.98em;
-}
+
 #completed-summary {
   margin-top: 8px;
   color: #fae142;
   font-size: 1.02em;
 }
+
+/* Buttons */
+.edit-btn {
+  background: #42a6fa;
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-left: 8px;
+}
+
+.edit-btn:hover {
+  background: #2e80c7;
+  color: #fff;
+}
+
+.undo-btn {
+  background: #fae142;
+  color: #1e2857;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.undo-btn:hover {
+  background: #e6cb3a;
+  color: #171a2b;
+}
+
 h2, h3 {
   margin: 0 0 0.5em 0;
 }
@@ -191,9 +235,171 @@ h2, h3 {
   color: #aaa;
   opacity: 1;
 }
+
 @media (max-width:600px) {
   main {
     max-width: 95vw;
     padding: 8vw 2vw;
   }
 }
+
+/* Task item styling */
+.task-item {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 12px !important;
+}
+
+.task-item label {
+  flex: 1;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.task-item label:hover {
+  color: #42a6fa;
+}
+
+/* Task actions */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.task-item:hover .task-actions {
+  opacity: 1;
+}
+
+.edit-btn, .delete-btn, .save-btn, .cancel-btn, .restore-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 4px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: #42a6fa;
+  border-color: #42a6fa;
+}
+
+.delete-btn:hover {
+  background: #ff4757;
+  border-color: #ff4757;
+}
+
+.save-btn:hover {
+  background: #2ed573;
+  border-color: #2ed573;
+}
+
+.cancel-btn:hover, .restore-btn:hover {
+  background: #ffa502;
+  border-color: #ffa502;
+}
+
+/* Edit input */
+.edit-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #42a6fa;
+  border-radius: 4px;
+  background: #1e2857;
+  color: #fff;
+  font-size: 1em;
+}
+
+.edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 166, 250, 0.3);
+}
+
+/* Undo functionality */
+.undo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2d5016;
+  border: 1px solid #4caf50;
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.undo-btn {
+  background: transparent;
+  color: #4caf50;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  flex: 1;
+  text-align: left;
+  transition: color 0.2s;
+}
+
+.undo-btn:hover {
+  color: #66bb6a;
+}
+
+.dismiss-btn {
+  background: transparent;
+  color: #999;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  transition: color 0.2s;
+}
+
+.dismiss-btn:hover {
+  color: #fff;
+}
+
+/* Completed items */
+.completed-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.restore-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.completed-item:hover .restore-btn {
+  opacity: 1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .task-actions {
+    opacity: 1; /* Always show on mobile */
+  }
+  
+  .edit-btn, .delete-btn, .save-btn, .cancel-btn, .restore-btn {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+  
+  .undo-container {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+  
+  .undo-btn {
+    text-align: center;
+    width: 100%;
+  }
+}
+
